@@ -1,8 +1,13 @@
-$version      = '2.4.4'
-$id           = 'zabbix-agent'
-$title        = 'Zabbix Agent'
-$url          = "http://www.zabbix.com/downloads/$version/zabbix_agents_$version.win.zip"
-$url64        = $url
+﻿$version        = '3.0.4'
+$id             = 'zabbix-agent'
+$title          = 'Zabbix Agent'
+$url            = "https://www.zabbix.com/downloads/$version/zabbix_agents_$version.win.zip"
+$url64          = $url
+$checksum       = "9fa6f9324ec1dce39aca630350d4c2ce"
+$checksumType   = "md5"
+$checksum64     = $checksum
+$checksumType64 = $checksumType
+
 
 $configDir    = Join-Path $env:PROGRAMDATA 'zabbix'
 $zabbixConf   = Join-Path $configDir 'zabbix_agentd.conf'
@@ -38,7 +43,7 @@ try {
     New-Item $tempDir -type directory
   }
 
-  Get-ChocolateyWebFile "$id" "$zipFile" "$url" "$url64"
+  Get-ChocolateyWebFile -PackageName "$id" -FileFullPath "$zipFile" -Url "$url" -Url64bit "$url64" -Checksum "$checksum" -ChecksumType "$checksumType" -Checksum64 "$checksum64" -ChecksumType64 "$checksumType64"
   Get-ChocolateyUnzip "$zipFile" "$tempDir"
 
   if ($is64bit) {
@@ -78,9 +83,7 @@ try {
 
   Install-ChocolateyPath $installDir 'Machine'
 
-  Write-ChocolateySuccess "$id"
-
 } catch {
-  Write-ChocolateyFailure "$id" "$($_.Exception.Message)"
-  throw
+  Write-Host "Error installing Zabbix Agent"
+  throw $_.Exception
 }
